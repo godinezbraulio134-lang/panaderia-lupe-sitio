@@ -3,10 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Panadería Doña Lupe</title>
+  <title>Panadería Doña Lupe · Pan hecho cada madrugada</title>
+  <meta name="description" content="Panadería de barrio: conchas, cuernos, bolillos y más, horneados cada madrugada. Horario, dirección y pedidos por WhatsApp.">
+  <style>
+    :root {
+      --azucar: #FDEFF3;
+      --cacao: #2A1712;
+      --rosa: #C2185B;
+      --rosa-suave: #F28DB5;
+      --corteza: #D9902F;
+      --masa: #F0C27B;
+      --linea: #E7C9D2;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--azucar);
+      color: var(--cacao);
+      font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--cacao); outline-offset: 3px; }
+
+    .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* Encabezado */
+    header { padding: 1.25rem 0; }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .marca { font-weight: 800; font-size: 1.15rem; letter-spacing: .01em; text-decoration: none; }
+    nav { display: flex; gap: 1.25rem; font-weight: 700; font-size: .95rem; }
+    nav a { text-decoration: none; padding: .25rem 0; border-bottom: 2px solid transparent; }
+    nav a:hover { border-bottom-color: var(--rosa); }
+
+    /* Portada */
+    .portada { padding: 2.5rem 0 4rem; }
+    .portada .wrap {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(2.4rem, 7vw, 4.4rem);
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      max-width: 11ch;
+    }
+    .portada p { margin: 0 0 1.75rem; max-width: 34ch; font-size: 1.15rem; }
+
+    .boton {
+      display: inline-block;
+      background: var(--rosa);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      padding: .9rem 1.5rem;
+      border-radius: 999px;
+      border: 2px solid var(--rosa);
+    }
+    .boton:hover { background: var(--cacao); border-color: var(--cacao); }
+
+    /* Concha dibujada con CSS (se reemplaza por una foto real) */
+    .concha {
+      position: relative;
+      width: min(100%, 22rem);
+      aspect-ratio: 1;
+      justify-self: center;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 30%, var(--masa), var(--corteza) 75%);
+      box-shadow: 0 1.2rem 0 -.4rem rgba(42, 23, 18, .18);
+    }
+    .concha::before {
+      content: "";
+      position: absolute;
+      inset: 7% 7% 20% 7%;
+      border-radius: 50% 50% 44% 44%;
+      background:
+        repeating-conic-gradient(from -90deg at 50% 100%,
+          var(--rosa-suave) 0 7deg, #f9b9d0 7deg 9deg);
+    }
+    .concha::after {
+      content: "";
+      position: absolute;
+      left: 12%; right: 12%; bottom: 14%;
+      height: 6%;
+      border-radius: 50%;
+      background: rgba(42, 23, 18, .12);
+    }
+
+    /* Secciones */
+    section { padding: 3.5rem 0; border-top: 1px solid var(--linea); }
+    h2 { margin: 0 0 1.5rem; font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.1; font-weight: 900; letter-spacing: -.01em; }
+
+    /* Menú con puntos guía */
+    .menu { list-style: none; margin: 0; padding: 0; max-width: 40rem; }
+    .menu li { display: flex; align-items: baseline; gap: .6rem; padding: .55rem 0; }
+    .menu .nombre { font-weight: 800; }
+    .menu .detalle { font-size: .95rem; opacity: .8; }
+    .menu .puntos { flex: 1; border-bottom: 2px dotted var(--rosa-suave); transform: translateY(-.3rem); min-width: 1rem; }
+    .menu .precio { font-weight: 900; color: var(--rosa); white-space: nowrap; }
+    .nota { margin-top: 1.25rem; font-size: .95rem; opacity: .8; }
+
+    /* Visítanos */
+    .datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 2rem; max-width: 46rem; }
+    .datos h3 { margin: 0 0 .4rem; font-size: 1.1rem; font-weight: 900; }
+    .datos p { margin: 0; }
+    .horario { display: grid; grid-template-columns: auto 1fr; gap: .15rem 1rem; margin: 0; }
+    .horario dt { font-weight: 700; }
+    .horario dd { margin: 0; }
+    .visita-cta { margin-top: 2rem; }
+
+    /* Pie */
+    footer { background: var(--cacao); color: var(--azucar); padding: 2rem 0; font-size: .95rem; }
+    footer p { margin: 0 0 .4rem; }
+    footer .demo { opacity: .75; font-size: .875rem; }
+
+    @media (max-width: 40rem) {
+      .portada .wrap { grid-template-columns: 1fr; }
+      .concha { order: -1; width: min(70%, 15rem); }
+      h1 { max-width: none; }
+      nav { gap: 1rem; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Panadería Doña Lupe</h1>
-  <p>Pan fresco todos los días. ¡Ya estamos en línea!.</p>
+
+  <header>
+    <div class="wrap">
+      <a class="marca" href="#inicio">Panadería Doña Lupe</a>
+      <nav aria-label="Principal">
+        <a href="#menu">Menú</a>
+        <a href="#visitanos">Visítanos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <div class="portada">
+      <div class="wrap">
+        <div>
+          <h1>Pan caliente cada madrugada</h1>
+          <p>Conchas, cuernos y bolillos hechos en la colonia desde temprano. Pasa por el tuyo o encárgalo por WhatsApp.</p>
+          <a class="boton" href="https://wa.me/520000000000?text=Hola%2C%20quiero%20hacer%20un%20pedido">Pedir por WhatsApp</a>
+        </div>
+        <div class="concha" role="img" aria-label="Ilustración de una concha de pan dulce con cubierta rosa"></div>
+      </div>
+    </div>
+
+    <section id="menu">
+      <div class="wrap">
+        <h2>Lo que hornea Lupe</h2>
+        <ul class="menu">
+          <li><span class="nombre">Concha</span><span class="detalle">rosa, vainilla o chocolate</span><span class="puntos"></span><span class="precio">$12</span></li>
+          <li><span class="nombre">Cuerno</span><span class="puntos"></span><span class="precio">$14</span></li>
+          <li><span class="nombre">Oreja</span><span class="puntos"></span><span class="precio">$16</span></li>
+          <li><span class="nombre">Empanada de piña</span><span class="puntos"></span><span class="precio">$18</span></li>
+          <li><span class="nombre">Polvorón</span><span class="puntos"></span><span class="precio">$10</span></li>
+          <li><span class="nombre">Bolillo</span><span class="puntos"></span><span class="precio">$4</span></li>
+          <li><span class="nombre">Pan de elote</span><span class="detalle">rebanada</span><span class="puntos"></span><span class="precio">$25</span></li>
+        </ul>
+        <p class="nota">Precios en pesos mexicanos. El menú puede cambiar según el día.</p>
+      </div>
+    </section>
+
+    <section id="visitanos">
+      <div class="wrap">
+        <h2>Ven por tu pan</h2>
+        <div class="datos">
+          <div>
+            <h3>Dirección</h3>
+            <p>Calle Ejemplo 123<br>Colonia Centro</p>
+          </div>
+          <div>
+            <h3>Horario</h3>
+            <dl class="horario">
+              <dt>Lunes a sábado</dt><dd>6:00 a 20:00</dd>
+              <dt>Domingo</dt><dd>7:00 a 14:00</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="visita-cta">
+          <a class="boton" href="https://wa.me/520000000000?text=Hola%2C%20quiero%20hacer%20un%20pedido">Escríbenos por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Panadería Doña Lupe</p>
+      <p class="demo">Sitio de demostración de un proyecto de portafolio. Alojado en AWS con S3 y CloudFront; se actualiza solo desde GitHub.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
