@@ -1,5 +1,8 @@
 # panaderia-lupe-sitio
-Sitio estatico de panaderia lupe en AWS 
+Sitio estatico de panaderia lupe en AWS
+## El cliente y su necesidad
+
+El cliente es una panadería local que necesitaba un sitio web estático: página de inicio con fotos, menú con precios, dirección, horario y botón de WhatsApp. Tenía un presupuesto muy limitado (quería pagar idealmente $0), con un aproximado de 100 a 300 visitas al mes y una actualización máxima de una vez al mes. No necesitaba compras en línea, registro de usuarios ni base de datos, y no quería tener que mantener servidores.
 ## Arquitectura
 
 ### Flujo del visitante
