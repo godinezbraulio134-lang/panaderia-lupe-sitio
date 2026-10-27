@@ -18,6 +18,10 @@ Elegí S3 porque el sitio es estático: solo hay que entregar archivos, sin ejec
 
 Elegí CloudFront con OAC porque mantiene el bucket de S3 privado: solo CloudFront puede leerlo, y lo comprobé al abrir la dirección directa de S3, que respondió AccessDenied. Además entrega el sitio con HTTPS, redirige automáticamente el tráfico HTTP a HTTPS y su caché hace que la página cargue rápido para los visitantes. La alternativa era dejar el bucket público, pero la descarté porque quedaría expuesto directamente a cualquiera y porque la dirección pública de un sitio de S3 solo funciona con HTTP, sin candado.
 
+### GitHub Actions con OIDC
+
+Elegí GitHub Actions con OIDC porque GitHub asume un rol de IAM y recibe credenciales temporales, sin que yo guarde llaves de acceso de larga duración en ningún lado. Además, el rol solo puede asumirse desde mi repositorio y mi rama main, y cuando una configuración falló pude ver en CloudTrail exactamente qué identidad había presentado GitHub. La alternativa era guardar llaves de acceso como secreto en GitHub, pero la descarté porque, si alguien las encuentra, puede entrar a mi cuenta de AWS hasta que se desactiven. También automatizar el despliegue evita subir los archivos a mano desde la consola cada vez que cambia el menú, algo que ocurre una vez al mes y que prefiero no depender de pasos manuales.
+
 ## Arquitectura
 
 ### Flujo del visitante
