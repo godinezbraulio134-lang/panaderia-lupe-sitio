@@ -14,6 +14,10 @@ Quedó una página funcional que muestra el menú, los precios, la ubicación, e
 
 Elegí S3 porque el sitio es estático: solo hay que entregar archivos, sin ejecutar código, y S3 lo hace sin servidores que administrar. Encaja con el presupuesto ideal de $0 del cliente y con sus visitas bajas, de 100 a 300 al mes. La alternativa era EC2, pero la descarté porque habría que mantener un servidor (sistema operativo, actualizaciones, que no se caiga), algo que el cliente no quería, y además cobra por las horas que está encendido.
 
+### CloudFront con OAC
+
+Elegí CloudFront con OAC porque mantiene el bucket de S3 privado: solo CloudFront puede leerlo, y lo comprobé al abrir la dirección directa de S3, que respondió AccessDenied. Además entrega el sitio con HTTPS, redirige automáticamente el tráfico HTTP a HTTPS y su caché hace que la página cargue rápido para los visitantes. La alternativa era dejar el bucket público, pero la descarté porque quedaría expuesto directamente a cualquiera y porque la dirección pública de un sitio de S3 solo funciona con HTTP, sin candado.
+
 ## Arquitectura
 
 ### Flujo del visitante
