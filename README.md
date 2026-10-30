@@ -61,6 +61,12 @@ Política de permisos del rol (con marcadores en lugar de mis datos reales):
   ]
 }
 
+## Problemas que resolví
+
+### El rol rechazaba a GitHub aunque todo parecía correcto
+
+El workflow de GitHub Actions fallaba en el paso de credenciales con el error "Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity". Fui descartando causas desde GitHub: la política de confianza del rol, que el valor de sub coincidiera con mi repositorio, las mayúsculas, que el workflow corriera en la rama main y el ARN guardado en la variable del repositorio. Todo coincidía, así que busqué en el historial de eventos de CloudTrail, que mostró el valor de sub que GitHub había enviado de verdad: incluía identificadores numéricos del usuario y del repositorio que mi política no tenía. Como la condición exige que coincida el texto completo, AWS rechazaba la petición. Lo resolví reemplazando el valor de la condición por el que aparecía en CloudTrail, y de paso la política quedó más segura, porque ata el rol a ese repositorio en concreto: si alguien borrara el repositorio y creara otro con el mismo nombre, tendría un identificador distinto y no podría asumir el rol. Aprendí que cuando un rol rechaza una identidad y todo parece correcto, lo primero es mirar en CloudTrail qué envió realmente el otro lado, en lugar de adivinar el formato.
+
 ## Arquitectura
 
 ### Flujo del visitante
