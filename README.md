@@ -67,6 +67,14 @@ Política de permisos del rol (con marcadores en lugar de mis datos reales):
 
 El workflow de GitHub Actions fallaba en el paso de credenciales con el error "Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity". Fui descartando causas desde GitHub: la política de confianza del rol, que el valor de sub coincidiera con mi repositorio, las mayúsculas, que el workflow corriera en la rama main y el ARN guardado en la variable del repositorio. Todo coincidía, así que busqué en el historial de eventos de CloudTrail, que mostró el valor de sub que GitHub había enviado de verdad: incluía identificadores numéricos del usuario y del repositorio que mi política no tenía. Como la condición exige que coincida el texto completo, AWS rechazaba la petición. Lo resolví reemplazando el valor de la condición por el que aparecía en CloudTrail, y de paso la política quedó más segura, porque ata el rol a ese repositorio en concreto: si alguien borrara el repositorio y creara otro con el mismo nombre, tendría un identificador distinto y no podría asumir el rol. Aprendí que cuando un rol rechaza una identidad y todo parece correcto, lo primero es mirar en CloudTrail qué envió realmente el otro lado, en lugar de adivinar el formato.
 
+## Qué mejoraría después
+
+**Dominio propio.** Si el cliente lo necesitara, usaría un dominio propio: el dominio se paga una vez al año y Route 53 cobra por la zona y por las consultas. Para mantener el candado necesitaría un certificado de ACM solicitado en la región us-east-1.
+
+**Borrar archivos retirados.** Hoy, si quito un archivo del repositorio, el despliegue no lo elimina de S3, y un visitante podría ver una versión anterior, por ejemplo un menú con precios viejos. Lo resolvería sincronizando con borrado y añadiendo al rol el permiso s3:DeleteObject sobre los archivos del bucket. El costo es perder parte del mínimo privilegio, porque el rol podría borrar cualquier archivo de ese bucket.
+
+**Invalidar solo lo que cambió.** Hoy se invalida toda la caché en cada despliegue. Si el sitio creciera, invalidaría solo las rutas que cambiaron. El costo es que el workflow tendría que detectar qué archivos se modificaron, lo que añade complejidad.
+
 ## Arquitectura
 
 ### Flujo del visitante
