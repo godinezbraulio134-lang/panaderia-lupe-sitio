@@ -22,6 +22,45 @@ Elegí CloudFront con OAC porque mantiene el bucket de S3 privado: solo CloudFro
 
 Elegí GitHub Actions con OIDC porque GitHub asume un rol de IAM y recibe credenciales temporales, sin que yo guarde llaves de acceso de larga duración en ningún lado. Además, el rol solo puede asumirse desde mi repositorio y mi rama main, y cuando una configuración falló pude ver en CloudTrail exactamente qué identidad había presentado GitHub. La alternativa era guardar llaves de acceso como secreto en GitHub, pero la descarté porque, si alguien las encuentra, puede entrar a mi cuenta de AWS hasta que se desactiven. También automatizar el despliegue evita subir los archivos a mano desde la consola cada vez que cambia el menú, algo que ocurre una vez al mes y que prefiero no depender de pasos manuales.
 
+Servicios descartados
+WAF
+
+Descarté WAF. Es un servicio que protege sitios y aplicaciones filtrando tráfico malicioso, por ejemplo bloqueando direcciones IP o limitando el número de peticiones. No lo usé porque cobra una cuota fija mensual aunque nadie visite el sitio, y el cliente quería que el costo fuera idealmente $0. En su lugar configuré una alerta de presupuesto con AWS Budgets para enterarme si aparece cualquier cargo. Lo usaría en un sitio con muchas visitas o con formularios, inicio de sesión o compras, donde el riesgo de abuso sí justifica la cuota.
+
+Route 53
+
+Descarté Route 53. Es el servicio de DNS de AWS: traduce un nombre de dominio, como el de la panadería, a la dirección IP donde está el sitio. No lo usé porque implica un dominio propio, y el cliente quería que el costo fuera idealmente $0: el dominio se paga una vez al año y Route 53 cobra por la zona y por las consultas. En su lugar, el sitio usa la dirección que CloudFront genera automáticamente, que ya tiene HTTPS porque AWS tiene el certificado de ese dominio. Lo usaría si el cliente quisiera una dirección propia y fácil de recordar; en ese caso también necesitaría un certificado de ACM, solicitado en la región us-east-1 para poder usarlo con CloudFront.
+
+Seguridad
+
+El rol que usa GitHub Actions tiene una política con solo tres acciones, cada una limitada a su propio recurso: ListBucket sobre el bucket, para ver qué archivos ya existen; PutObject sobre los archivos del bucket, para subir los nuevos; y CreateInvalidation sobre mi distribución de CloudFront, para renovar la caché. No incluye permisos para leer ni borrar archivos, ni para usar ningún otro servicio, siguiendo el principio de mínimo privilegio. Además, el rol solo puede asumirse desde mi repositorio y mi rama main.
+
+Política de permisos del rol (con marcadores en lugar de mis datos reales):
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListarBucket",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::<nombre-del-bucket>"
+    },
+    {
+      "Sid": "SubirArchivos",
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::<nombre-del-bucket>/*"
+    },
+    {
+      "Sid": "InvalidarCache",
+      "Effect": "Allow",
+      "Action": "cloudfront:CreateInvalidation",
+      "Resource": "arn:aws:cloudfront::<ID-cuenta>:distribution/<ID-distribución>"
+    }
+  ]
+}
+
 ## Arquitectura
 
 ### Flujo del visitante
