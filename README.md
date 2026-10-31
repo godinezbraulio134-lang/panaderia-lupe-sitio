@@ -103,3 +103,6 @@ flowchart LR
     GA -->|"5. sube los archivos"| S3[("S3, bucket privado")]
     GA -->|"6. invalida la caché"| CF["CloudFront"]
 ```
+
+![Ejecuciones del workflow de despliegue en GitHub Actions, todas en verde](captura-actions.png)
+
