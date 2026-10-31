@@ -37,6 +37,8 @@ Seguridad
 
 El rol que usa GitHub Actions tiene una política con solo tres acciones, cada una limitada a su propio recurso: ListBucket sobre el bucket, para ver qué archivos ya existen; PutObject sobre los archivos del bucket, para subir los nuevos; y CreateInvalidation sobre mi distribución de CloudFront, para renovar la caché. No incluye permisos para leer ni borrar archivos, ni para usar ningún otro servicio, siguiendo el principio de mínimo privilegio. Además, el rol solo puede asumirse desde mi repositorio y mi rama main.
 
+![Acceder directo al bucket de S3 devuelve AccessDenied, porque solo CloudFront puede leerlo](captura-accessdenied.png)
+
 Política de permisos del rol (con marcadores en lugar de mis datos reales):
 
 {
